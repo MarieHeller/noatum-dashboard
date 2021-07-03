@@ -276,7 +276,7 @@ def update_output(n_clicks, dropdown_carrier, dropdown_origin, dropdown_destinat
         'Ibex30', 'Crude_Oil30', 'ALGECIRAS', 'BARCELONA', 'BILBAO', 'VALENCIA',
         'VIGO', 'SHANGHAI', 'ANL', 'APL', 'CHINA SHIPPING', 'CMA-CGM', 'COSCO',
         'EVERGREEN', 'HAMBURG SUD', 'HANJIN', 'HAPAG LLOYD', 'HMM', 'K-LINE',
-        'MAERSK', 'MOL', 'MSC', 'NIPPON', 'ONE', 'OOCL', 'UASC', 'YANG MING',
+        'MAERSK', 'MSC', 'NIPPON', 'ONE', 'OOCL', 'UASC', 'YANG MING',
         '0', '1', '2', '3', '4', '5', '6', '1.1', '2.1', '3.1', '4.1', '5.1',
         '6.1', '7', '8', '9', '10', '11', '12'])
         
