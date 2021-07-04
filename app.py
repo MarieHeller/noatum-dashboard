@@ -11,6 +11,8 @@ from datetime import datetime
 from datetime import timedelta
 import pickle
 from dash.dependencies import Input, Output, State
+import PySimpleGUI as sg
+import easygui as e
 
 df= pd.DataFrame(columns = ['Day', 'Price30', 'CNY/USD30', 'EUR/USD30', 'EUR/CNY30', 'SSE30',
        'Ibex30', 'Crude_Oil30', 'ALGECIRAS', 'BARCELONA', 'BILBAO', 'VALENCIA',
@@ -258,7 +260,11 @@ app.layout = html.Div([
 def update_output(n_clicks, dropdown_carrier, dropdown_origin, dropdown_destination, freight_rate, oil_price, ibex, SSE, CNYUSD, EURUSD, EURCNY):
     if n_clicks is None:
         raise PreventUpdate
-
+    
+    elif dropdown_carrier or dropdown_destination or dropdown_origin or freight_rate or oil_price or ibex or SSE or CNYUSD or EURUSD or EURCNY is None:
+        # PreventUpdate prevents ALL outputs updating
+        return dash.no_update
+            
     else:
         today = date.today()
         date30= date.today() + timedelta(days=30)
