@@ -174,7 +174,7 @@ app.layout = html.Div([
                     dbc.Label("Sudden Surcharge", className="label"),
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
-                        dbc.Input(id='surchage', placeholder="Amount", type="number"),
+                        dbc.Input(id='surcharge', placeholder="Amount", type="number"),
                         dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
@@ -202,45 +202,23 @@ app.layout = html.Div([
                 
                 html.Div([
                     html.Label("30 Day Forecast (in USD)"),
-                    html.Div(id='prediction-content', className="prediction box"),
+                    html.Div(id='prediction-content-30', className="prediction box"),
                 ], className= "prediction"),
 
                 html.Div([
-                    html.Label("90 Day Forecast (in USD)") ,
-                    html.Div(
-                        html.P("1678"), 
-                    className="box",
-                    ),
+                    html.Label("90 Day Forecast (in USD)"),
+                    html.Div(id='prediction-content-90', className="prediction box"),
                 ], className= "prediction"),
 
             ], className="predictions card-predictions"),
-
-         
-            # html.Div([
-            #     html.H2("Predictions", className = "headline-2"),
-            #     html.Div([
-            #         html.Label("30 Day Forecast") ,
-            #         html.Div(
-            #             html.P("1250$"), 
-            #         className="box",
-            #         ),
-            #     ], className= "prediction"),
-
-            #     html.Div([
-            #         dbc.Label("90 Day Forecast") ,
-            #         html.Div(
-            #             html.P("1678,00$"), 
-            #         className="box",
-            #         ),
-            #     ], className= "prediction"),
-            # ], className="predictions card-predictions"),
         ], className= "container"
     ),
 ], 
 )
 
-@app.callback(
-    Output('prediction-content', 'children'),
+@app.callback([
+    Output('prediction-content-30', 'children'),
+    Output('prediction-content-90', 'children')],
     [Input('my-button', 'n_clicks')],
     [State('dropdown_carrier', 'value'),
     State('dropdown_origin', 'value'),
@@ -251,57 +229,103 @@ app.layout = html.Div([
     State('SSE', 'value'),
     State('CNYUSD', 'value'),
     State('EURUSD', 'value'),
-    State('EURCNY', 'value')],
+    State('EURCNY', 'value'),
+    State('geopolitical', 'value'),
+    State('surcharge', 'value'),
+    State('congestion', 'value')],
     prevent_initial_call=True
 )
     
-def update_output(n_clicks, dropdown_carrier, dropdown_origin, dropdown_destination, freight_rate, oil_price, ibex, SSE, CNYUSD, EURUSD, EURCNY):
+def update_output(n_clicks, dropdown_carrier, dropdown_origin, dropdown_destination, freight_rate, oil_price, ibex, SSE, CNYUSD, EURUSD, EURCNY, geopolitical, surcharge, congestion):
     if n_clicks is None:
         raise PreventUpdate
 
     else:
-        today = date.today()
         date30= date.today() + timedelta(days=30)
-        month = date30.month
-        day = date30.day
-        weekday= date30.weekday()
+        month30 = date30.month
+        day30 = date30.day
+        weekday30= str(date30.weekday())
+        
+        if month30 <7:
+            month30 = month30 + 0.1 
 
-        if month <7:
-            month = month + 0.1 
+    month30= str(month30)
+    
+    df_30= pd.DataFrame(columns = ['Day', 'Price30', 'CNY/USD30', 'EUR/USD30', 'EUR/CNY30', 'SSE30',
+       'Ibex30', 'Crude_Oil30', 'ALGECIRAS', 'BARCELONA', 'BILBAO', 'VALENCIA',
+       'VIGO', 'SHANGHAI', 'ANL', 'APL', 'CHINA SHIPPING', 'CMA-CGM', 'COSCO',
+       'EVERGREEN', 'HAMBURG SUD', 'HANJIN', 'HAPAG LLOYD', 'HMM', 'K-LINE',
+       'MAERSK', 'MOL', 'MSC', 'NIPPON', 'ONE', 'OOCL', 'UASC', 'YANG MING',
+       '0', '1', '2', '3', '4', '5', '6', '1.1', '2.1', '3.1', '4.1', '5.1',
+       '6.1', '7', '8', '9', '10', '11', '12'])
+    
+    df_30.loc[0] = 0
+    
+    df_30['Day'] = day30
+    df_30['Price30'] = freight_rate
+    df_30['CNY/USD30'] = CNYUSD
+    df_30['EUR/USD30'] = EURUSD
+    df_30['EUR/CNY30'] = EURCNY
+    df_30['SSE30'] = SSE
+    df_30['Ibex30'] = ibex
+    df_30['Crude_Oil30'] = oil_price
+    df_30[dropdown_destination] = 1
+    df_30[dropdown_origin] = 1
+    df_30[dropdown_carrier] = 1
+    df_30[weekday30] = 1
+    df_30[month30] = 1
+    
+    rf_30 = pickle.load(open('/Users/marieheller/OneDrive - Universitat Ramón Llull/01_Courses/02_Term 2/Noatum - Capstone/Final Models/model_30.sav', 'rb'))
+    
+    prediction_30 = rf_30.predict(df_30)
+    pred_30 = round(prediction_30[0][0]/100) * 100
+    pred_30 = pred_30 + geopolitical + surcharge + congestion
 
-        month= str(month)
-        weekday = str(weekday)
-        
-        df= pd.DataFrame(columns = ['Day', 'Price30', 'CNY/USD30', 'EUR/USD30', 'EUR/CNY30', 'SSE30',
-        'Ibex30', 'Crude_Oil30', 'ALGECIRAS', 'BARCELONA', 'BILBAO', 'VALENCIA',
-        'VIGO', 'SHANGHAI', 'ANL', 'APL', 'CHINA SHIPPING', 'CMA-CGM', 'COSCO',
-        'EVERGREEN', 'HAMBURG SUD', 'HANJIN', 'HAPAG LLOYD', 'HMM', 'K-LINE',
-        'MAERSK', 'MSC', 'NIPPON', 'ONE', 'OOCL', 'UASC', 'YANG MING',
-        '0', '1', '2', '3', '4', '5', '6', '1.1', '2.1', '3.1', '4.1', '5.1',
-        '6.1', '7', '8', '9', '10', '11', '12'])
-        
-        df.loc[0] = 0
-        
-        df['Day'] = day
-        df['Price30'] = freight_rate
-        df['CNY/USD30'] = CNYUSD
-        df['EUR/USD30'] = EURUSD
-        df['EUR/CNY30'] = EURCNY
-        df['SSE30'] = SSE
-        df['Ibex30'] = ibex
-        df['Crude_Oil30'] = oil_price
-        df[dropdown_destination] = 1
-        df[dropdown_origin] = 1
-        df[dropdown_carrier] = 1
-        df[weekday] = 1
-        df[month] = 1
-        
-        rf = pickle.load(open('/Users/marieheller/OneDrive - Universitat Ramón Llull/01_Courses/02_Term 2/Noatum - Capstone/Final Models/model.sav', 'rb'))
-        
-        prediction = rf.predict(df)
-        pred = round(prediction[0]/100) * 100
-        
-        return pred
+    #90days prediction
+    date90= date.today() + timedelta(days=90)
+    month90 = date90.month
+    day90 = date90.day
+    weekday90= str(date90.weekday())
+
+    if month90 <7:
+        month90 = month90 + 0.1 
+
+    month90= str(month90)
+    
+    df_90 = pd.DataFrame(columns =['Day', 'Price90', 'CNY/USD90', 'EUR/USD90', 'EUR/CNY90', 'SSE90',
+       'Ibex90', 'Crude_Oil90', 'ALGECIRAS', 'BARCELONA', 'BILBAO', 'VALENCIA',
+       'VIGO', 'SHANGHAI', 'ANL', 'APL', 'CHINA SHIPPING', 'CMA-CGM', 'COSCO',
+       'EVERGREEN', 'HAMBURG SUD', 'HANJIN', 'HAPAG LLOYD', 'HMM', 'K-LINE',
+       'MAERSK', 'MSC', 'NIPPON', 'ONE', 'OOCL', 'UASC', 'YANG MING', '0', '1',
+       '2', '3', '4', '5', '6', '1.1', '2.1', '3.1', '4.1', '5.1', '6.1', '7',
+       '8', '9', '10', '11', '12'])
+
+
+    df_90.loc[0] = 0
+    
+    df_90['Day'] = day90
+    df_90['Price90'] = freight_rate
+    df_90['CNY/USD90'] = CNYUSD
+    df_90['EUR/USD90'] = EURUSD
+    df_90['EUR/CNY90'] = EURCNY
+    df_90['SSE90'] = SSE
+    df_90['Ibex90'] = ibex
+    df_90['Crude_Oil90'] = oil_price
+    df_90[dropdown_destination] = 1
+    df_90[dropdown_origin] = 1
+    df_90[dropdown_carrier] = 1
+    df_90[weekday90] = 1
+    df_90[month90] = 1
+
+    
+    rf_90 = pickle.load(open('/Users/marieheller/OneDrive - Universitat Ramón Llull/01_Courses/02_Term 2/Noatum - Capstone/Final Models/model_90.sav', 'rb'))
+    prediction_90 = rf_90.predict(df_90)
+    pred_90 = round(prediction_90[0][0]/100) * 100
+    pred_90 = pred_90 + geopolitical + surcharge + congestion
+
+    return pred_30, pred_90
+
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
