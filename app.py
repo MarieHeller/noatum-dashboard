@@ -111,47 +111,47 @@ app.layout = html.Div([
                 ]),
 
                 html.Div([
-                    dbc.Label("Shanghai Index Today", className="label"),
+                    dbc.Label("SSE Composite Index Today", className="label"),
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='SSE', placeholder="Amount", type="number"),
                         dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
-                    html.A("Get SSE", href="https://finance.yahoo.com/quote/000001.ss/history/"),
+                    html.A("Get SSE", href="https://finance.yahoo.com/quote/000001.ss/history/", target="_blank"),
                 ]),
 
                 html.Div([
-                    dbc.Label("CNY/USD30", className="label"),
+                    dbc.Label("CNY/USD", className="label"),
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='CNYUSD', placeholder="Amount", type="number"),
                         dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
-                    html.A("Find exchange rate", href="https://finance.yahoo.com/quote/USDCNY=X/"),
+                    html.A("Find exchange rate", href="https://finance.yahoo.com/quote/USDCNY=X/", target="_blank"),
                 ]),
 
                 html.Div([
-                    dbc.Label("EUR/USD30", className="label"),
+                    dbc.Label("EUR/USD", className="label"),
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='EURUSD', placeholder="Amount", type="number"),
                         dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
-                    html.A("Find exchange rate", href="https://finance.yahoo.com/quote/EURUSD=X/"),
+                    html.A("Find exchange rate", href="https://finance.yahoo.com/quote/EURUSD=X/", target="_blank"),
                 ]),
 
                 html.Div([
-                    dbc.Label("EUR/CNY30", className="label"),
+                    dbc.Label("EUR/CNY", className="label"),
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='EURCNY', placeholder="Amount", type="number"),
                         dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
-                    html.A("Find exchange rate", href="https://finance.yahoo.com/quote/EURCNY=X%3Fp=EURCNY/"),
+                    html.A("Find exchange rate", href="https://finance.yahoo.com/quote/EURCNY=X%3Fp=EURCNY/", target="_blank"),
                 ]),
 
 
