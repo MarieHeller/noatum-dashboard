@@ -85,7 +85,6 @@ app.layout = html.Div([
                 dbc.InputGroup([
                 dbc.InputGroupAddon("$", addon_type="prepend"),
                 dbc.Input(id='freight_rate', placeholder="Amount", type="number"),
-                dbc.InputGroupAddon(".00", addon_type="append"),
                 ]
                 ),
 
@@ -94,7 +93,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='oil_price', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]),
                     html.A("Get oil price", href='https://finance.yahoo.com/quote/CL%3DF%3FP%3DCL%3DF/history?p=CL%3DF%3FP%3DCL%3DF', target="_blank"),
                 ]),
@@ -104,7 +102,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='ibex',placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                     html.A("Get IBEX35", href="https://finance.yahoo.com/quote/%5EIBEX/history/"),
@@ -115,7 +112,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='SSE', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                     html.A("Get SSE", href="https://finance.yahoo.com/quote/000001.ss/history/", target="_blank"),
@@ -126,7 +122,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='CNYUSD', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                     html.A("Find exchange rate", href="https://finance.yahoo.com/quote/USDCNY=X/", target="_blank"),
@@ -137,7 +132,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='EURUSD', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                     html.A("Find exchange rate", href="https://finance.yahoo.com/quote/EURUSD=X/", target="_blank"),
@@ -148,7 +142,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='EURCNY', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                     html.A("Find exchange rate", href="https://finance.yahoo.com/quote/EURCNY=X%3Fp=EURCNY/", target="_blank"),
@@ -164,7 +157,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='geopolitical', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                 ]
@@ -175,7 +167,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='surcharge', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                 ]
@@ -186,7 +177,6 @@ app.layout = html.Div([
                     dbc.InputGroup([
                         dbc.InputGroupAddon("$", addon_type="prepend"),
                         dbc.Input(id='congestion', placeholder="Amount", type="number"),
-                        dbc.InputGroupAddon(".00", addon_type="append"),
                     ]
                     ),
                 ]
@@ -318,10 +308,10 @@ def update_output(n_clicks, dropdown_carrier, dropdown_origin, dropdown_destinat
     df_90[month90] = 1
 
     
-    rf_90 = pickle.load(open('/Users/marieheller/OneDrive - Universitat Ramón Llull/01_Courses/02_Term 2/Noatum - Capstone/Final Models/model_90.sav', 'rb'))
+    rf_90 = pickle.load(open('/Users/marieheller/OneDrive - Universitat Ramón Llull/01_Courses/02_Term 2/Noatum - Capstone/Final Models/model_90_regr.sav', 'rb'))
     prediction_90 = rf_90.predict(df_90)
     pred_90 = round(prediction_90[0][0]/100) * 100
-    pred_90 = pred_90 + geopolitical + surcharge + congestion
+    pred_90 = pred_90 + geopolitical + surcharge + congestion + 1000
 
     return pred_30, pred_90
 
@@ -329,13 +319,3 @@ def update_output(n_clicks, dropdown_carrier, dropdown_origin, dropdown_destinat
 
 if __name__ == "__main__":
     app.run_server(debug=True)
-
-
-
-    #   dcc.RadioItems(
-    #                 options=[
-    #                     {'label': '  Optimistic', 'value': 'Optimistic'},
-    #                     {'label': '  Neutral', 'value': 'Neutral'},
-    #                     {'label': '  Pessimistic', 'value': 'Pessimistic'}
-    #                 ], labelStyle = dict(display='block'),
-    #                 value=''),
